@@ -31,6 +31,16 @@ static void	end(int err_no, t_args *args)
 		ft_putstr_fd("Malloc rip\n", 2);
 }
 
+long int	gettime(int *time)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	if (time)
+		*time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
 int	ft_atoi(const char *str)
 {
 	long long int	n;
@@ -267,25 +277,25 @@ void	*checkDeath(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	usleep(1000 * philo->args->toDie);
+	usleep(1000 * philo->args[1]);
 	pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
-	while (pretty_time(philo, 0) - philo->lastMeal
-			<= philo->args->toDie && (philo->args->lunches == -1 ||
-				philo->args->lunches > philo->meals))
+	while (philo->args[4] == -1 || philo->args[4] > philo->meals)
 	{
 		pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
-		usleep(1000 * (philo->args->toDie - (pretty_time(philo, 0)
-					- philo->lastMeal)));
+		if (gettime(NULL) - philo->lastMeal > philo->args[1])
+			break ;
+		// usleep(1000 * (philo->args[1] - (gettime(NULL)
+		// 			- philo->lastMeal)));
 		pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
 	}
-	if (pretty_time(philo, 0) - philo->lastMeal > philo->args->toDie)
+	if (pretty_time(philo, 0) - philo->lastMeal > philo->args[1])
 	{
 		pthread_mutex_lock(&philo->mutexes.mutexEnd);
-		philo->args->flags.someoneDied = philo->num;
+		// philo->args->flags.someoneDied = philo->num;
 		//pthread_mutex_lock(&philo->mutexes.mutexPrintf);
 		return ((void *)1);
 	}
-	philo->args->flags.haveEaten[philo->num + 1] = 1;
+	// philo->args->flags.haveEaten[philo->num + 1] = 1;
 	pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
 	return ((void *)2);
 }
@@ -344,40 +354,26 @@ static t_mutexes	init_mutexes(t_args *args)
 	return (mutexes);
 }
 
-static t_philo	*create_struct(t_args *args, t_mutexes mutexes, int num)
+static t_philo	*create_struct(int *args, t_mutexes *mutexes)
 {
-	t_philo	*philo;
+	t_philo		*philo;
+	int			i;
+	long int	time;
 
-	philo = (t_philo *)malloc(sizeof(t_philo));
+	i = -1;
+	gettime(&time);
+	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
 	if (!philo)
 		return (NULL);//!!!!!!!!!!!!!!!!
-	philo->args = args;
-	philo->num = num;
-	philo->mutexes = mutexes;
+	while (++i < args[0])
+	{
+		philo[i].startTime = time;
+		philo[i].args = args;
+		philo[i].num = i;
+		philo[i].mutexes = *mutexes;
+	}
 	return (philo);
 }
-
-//int	alive(t_philo **philo, t_args *args)
-//{
-//	int	i;
-//	int	m;
-//
-//	i = -1;
-//	m = 0;
-//	while (++i < args->quant)
-//	{
-//		if (!philo[i])
-//		{
-//			++m;
-//			continue ;
-//		}
-//		if (philo[i]->isDead)
-//			return (-1);
-//	}
-//	if (m == args->quant)
-//		return (1);
-//	return (0);
-//}
 
 int	checkEnd(t_args *args)
 {
@@ -404,36 +400,35 @@ int	checkEnd(t_args *args)
 	}
 }
 
-void	start(t_args *args)
+void	start(int *args)
 {
 	pthread_t	t[args->quant];
 	t_mutexes	mutexes;
-	t_philo		**philo;
+	t_philo		*philo;
 	int			i;
 	//int			fd;
 
 	i = -1;
 	set_time(args);
 	mutexes = init_mutexes(args);
-	philo = (t_philo **)malloc(sizeof(t_philo *) * args->quant);
+	philo = create_struct(args, &mutexes);
 	if (!philo)
 		return ;
-	while (++i < args->quant)
+	while (++i < args[0])
 	{
-		philo[i] = create_struct(args, mutexes, i);
-		if (!philo[i])
-			return ;
-		if (pthread_create(&t[i], NULL, philosopher, philo[i]))
+		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
 			printf("Threads rip!\n");
 			free(philo);
+			free(args);
+			free(mutexes.forks);
 			return ;
 		}
 	}
 	i = -1;
 	if (checkEnd(args) == -1)
 	{
-		while (++i < args->quant)
+		while (++i < args[0])
 			pthread_detach(t[i]);
 		dest_mutexes(mutexes, args);
 		finish(args, NULL);

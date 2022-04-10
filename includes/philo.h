@@ -44,6 +44,7 @@ typedef struct s_philo
 	int				*args;
 	int				num;
 	int				meals;
+	long int		startTime;
 	long int		lastMeal;
 	t_mutexes		mutexes;
 }	t_philo;
