@@ -19,17 +19,17 @@ typedef struct s_flags
 	int	someoneDied;
 }	t_flags;
 
-typedef struct s_args
-{
-	int				*pars;
-	int				quant;
-	int				toDie;
-	int				toEat;
-	int				toSleep;
-	int				lunches;
-	long int		startTime;
-	t_flags			flags;
-}	t_args;
+// typedef struct s_args
+// {
+// 	int				*pars;
+// 	int				quant;
+// 	int				toDie;
+// 	int				toEat;
+// 	int				toSleep;
+// 	int				lunches;
+// 	long int		startTime;
+// 	t_flags			flags;
+// }	t_args;
 
 typedef struct s_mutexes
 {
@@ -42,7 +42,9 @@ typedef struct s_mutexes
 typedef struct s_philo
 {
 	int				*args;
+	int				*needtoeat;
 	int				num;
+	int				*someoneDead;
 	int				meals;
 	long int		startTime;
 	long int		lastMeal;

@@ -157,7 +157,7 @@ long int	pretty_time(t_philo *philo, int flag)
 	return (time);
 }
 
-static void	set_time(t_args *args)
+static void	set_time(int *args)
 {
 	struct timeval	tv;
 
@@ -205,16 +205,20 @@ void	eat(t_philo *philo)
 {
 	pthread_t	peat;
 
-	if (pthread_create(&peat, NULL, my_sleep, &philo->args->toEat))
+	if (pthread_create(&peat, NULL, my_sleep, &philo->args[2]))
 		exit(1);
 	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-	//pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
-	printf("%ld %d is eating\n", -philo->args->startTime
-			+ pretty_time(philo, 1), philo->num + 1);
+	pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
+	printf("%ld %d is eating\n", -philo->startTime
+			+ gettime(NULL), philo->num + 1);
 	pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
-	if (philo->args->lunches != -1)
+	if (philo->args[3] != -1)
+	{
+		if (philo->needtoeat)
+			--(*philo->needtoeat);
 		++philo->meals;
-	//pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
+	}
+	pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
 	pthread_join(peat, NULL);
 }
 
@@ -222,10 +226,10 @@ void	sleep_ph(t_philo *philo)
 {
 	pthread_t	psleep;
 
-	if (pthread_create(&psleep, NULL, my_sleep, &philo->args->toSleep))
+	if (pthread_create(&psleep, NULL, my_sleep, &philo->args[3]))
 		exit(1);
 	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-	printf("%ld %d is sleeping\n", -philo->args->startTime
+	printf("%ld %d is sleeping\n", -philo->startTime
 			+ pretty_time(philo, 0), philo->num + 1);
 	pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
 	pthread_join(psleep, NULL);
@@ -247,16 +251,17 @@ void	*philo_life(void *p)
 	meals = 0;
 	philo = (t_philo *)p;
 	pthread_mutex_lock(&philo->mutexes.mutexEnd);
-	while (!philo->args->flags.someoneDied && (philo->args->lunches == -1
-				|| ++meals < philo->args->lunches))
+	// while (!philo->args->flags.someoneDied && (philo->args[4] == -1
+	while (!*(philo->someoneDead) && (philo->args[4] == -1
+				|| ++meals < philo->args[4]))
 	{
-		pthread_mutex_unlock(&philo->mutexes.mutexEnd);
+		// pthread_mutex_unlock(&philo->mutexes.mutexEnd);
 		take_forks(philo);
 		eat(philo);
 		put_forks(philo);
 		sleep_ph(philo);
 		think(philo);
-		pthread_mutex_lock(&philo->mutexes.mutexEnd);
+		// pthread_mutex_lock(&philo->mutexes.mutexEnd);
 	}
 	return (NULL);
 }
@@ -277,7 +282,7 @@ void	*checkDeath(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	usleep(1000 * philo->args[1]);
+	// usleep(1000 * philo->args[1]);
 	pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
 	while (philo->args[4] == -1 || philo->args[4] > philo->meals)
 	{
@@ -290,7 +295,8 @@ void	*checkDeath(void *data)
 	}
 	if (pretty_time(philo, 0) - philo->lastMeal > philo->args[1])
 	{
-		pthread_mutex_lock(&philo->mutexes.mutexEnd);
+		// pthread_mutex_lock(&philo->mutexes.mutexEnd);
+		*(philo->someoneDead)++;
 		// philo->args->flags.someoneDied = philo->num;
 		//pthread_mutex_lock(&philo->mutexes.mutexPrintf);
 		return ((void *)1);
@@ -323,7 +329,7 @@ static void	*philosopher(void	*a)
 	return (NULL);
 }
 
-static void	dest_mutexes(t_mutexes mutexes, t_args *args)
+static void	dest_mutexes(t_mutexes mutexes, int *args)
 {
 	int	i;
 
@@ -359,23 +365,33 @@ static t_philo	*create_struct(int *args, t_mutexes *mutexes)
 	t_philo		*philo;
 	int			i;
 	long int	time;
+	int			deadman;
 
 	i = -1;
+	deadman = 0;
 	gettime(&time);
 	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
 	if (!philo)
 		return (NULL);//!!!!!!!!!!!!!!!!
+	if (args[4] != -1)
+	{
+		args[4] = args[0] * args[4];
+	}
 	while (++i < args[0])
 	{
 		philo[i].startTime = time;
 		philo[i].args = args;
 		philo[i].num = i;
 		philo[i].mutexes = *mutexes;
+		philo[i].needtoeat = NULL;
+		if (args[4] != -1)
+			philo[i].needtoeat = &args[4];
 	}
+
 	return (philo);
 }
 
-int	checkEnd(t_args *args)
+int	checkEnd(int *args)
 {
 	int	i;
 	int	full;
