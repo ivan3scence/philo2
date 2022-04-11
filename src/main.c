@@ -34,30 +34,29 @@
 
 
 
-t_philo	*create_struct(int *args, t_mutexes *mutexes)
+t_philo	*create_struct(int *args, t_mutexes *mutexes, int *deadman)
 {
 	t_philo		*philo;
 	int			i;
-	long int	time;
-	int			deadman;
+	// int			deadman;
 
 	i = -1;
-	deadman = 0;
-	gettime(&time);
+	// deadman = 0;
 	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
 	if (!philo)
 		return (NULL);//!!!!!!!!!!!!!!!!
-	if (args[4] != -1)
-	{
-		args[4] = args[0] * args[4];
-	}
+	// if (args[4] != -1)
+	// {
+	// 	args[4] = args[0] * args[4];
+	// }
 	while (++i < args[0])
 	{
-		philo[i].startTime = time;
+		// philo[i].startTime = 0;
+		// philo[i].lastMeal = 0;
 		philo[i].args = args;
 		philo[i].num = i;
 		philo[i].mutexes = *mutexes;
-		philo[i].someoneDead = &deadman;
+		philo[i].someoneDead = deadman;
 		// philo[i].needtoeat = NULL;
 		// if (args[4] != -1)
 		// 	philo[i].needtoeat = &args[4];
@@ -72,20 +71,26 @@ void	start(int *args)
 	t_mutexes	mutexes;
 	t_philo		*philo;
 	int			i;
+	long int	time;
+	int	pchel=0;
+	int *deadman=&pchel;
 
 	i = -1;
 	t = (pthread_t *)malloc(sizeof(pthread_t) * args[0]);
 	if (!t)
 		return end(MALLOC, args, NULL, NULL);
 	mutexes = init_mutexes(args);
-	philo = create_struct(args, &mutexes);
+	philo = create_struct(args, &mutexes, deadman);
 	if (!philo)
 	{
 		dest_mutexes(mutexes, args);
 		return end(MALLOC, NULL, NULL, t);
 	}
+	gettime(&time);
 	while (++i < args[0])
 	{
+		philo[i].startTime = time;
+		philo[i].lastMeal = time;
 		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
 			dest_mutexes(mutexes, args);

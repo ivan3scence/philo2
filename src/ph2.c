@@ -39,6 +39,8 @@ void	eat(t_philo *philo)
 {
 	// pthread_t	peat;
 
+	// if (!philo->lastMeal)
+	// 	philo->lastMeal = gettime();
 	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
 	pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
 	printf("%ld %d is eating\n", -philo->startTime

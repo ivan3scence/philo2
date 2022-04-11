@@ -71,7 +71,7 @@ int			*validate(int argc, char **argv);
 void		dest_mutexes(t_mutexes mutexes, int *args);
 // int			checkEnd(int *args);
 t_mutexes	init_mutexes(int *args);
-t_philo		*create_struct(int *args, t_mutexes *mutexes);
+t_philo		*create_struct(int *args, t_mutexes *mutexes, int *deadman);
 void		start(int *args);
 
 # endif
