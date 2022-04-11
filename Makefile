@@ -10,7 +10,7 @@ RM = rm -f
 
 NAME = philo
 
-SRC = main.c
+SRC = main.c utils.c validate.c philo.c ph2.c
 
 SRC_DIR = src/
 
