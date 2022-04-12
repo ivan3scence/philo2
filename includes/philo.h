@@ -23,8 +23,8 @@ typedef struct s_flags
 
 typedef struct s_fd
 {
-	int			num;
-	long int	time;
+	int			*num;
+	long int	*time;
 }	t_fd;
 // typedef struct s_args
 // {
@@ -78,7 +78,7 @@ int			*validate(int argc, char **argv);
 void		dest_mutexes(t_mutexes mutexes, int *args);
 // int			checkEnd(int *args);
 t_mutexes	init_mutexes(int *args);
-t_philo		*create_struct(int *args, t_mutexes *mutexes, int *deadman);
+t_philo		*create_struct(int *args, t_mutexes *mutexes, int *deadman, int *fdnum, long int *fdtime);
 void		start(int *args);
 
 # endif

@@ -1,6 +1,6 @@
 #include "../includes/philo.h"
 
-t_philo	*create_struct(int *args, t_mutexes *mutexes, int *deadman)
+t_philo	*create_struct(int *args, t_mutexes *mutexes, int *deadman, int *fdnum, long int *fdtime)
 {
 	t_philo		*philo;
 	int			i;
@@ -14,7 +14,8 @@ t_philo	*create_struct(int *args, t_mutexes *mutexes, int *deadman)
 		end(MALLOC, args, NULL, NULL);
 		return (NULL);
 	}
-	fistDead->num = -1;
+	fistDead->num = fdnum;
+	fistDead->time = fdtime;
 	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
 	if (!philo)
 	{
@@ -52,13 +53,17 @@ void	start(int *args)
 	long int	time;
 	int	pchel=0;
 	int *deadman=&pchel;
+	int	fdnum=-1;
+	int *fdn=&fdnum;
+	long int	fdtime=0;
+	long int *fdt=&fdtime;
 
 	i = -1;
 	t = (pthread_t *)malloc(sizeof(pthread_t) * args[0]);
 	if (!t)
 		return end(MALLOC, args, NULL, NULL);
 	mutexes = init_mutexes(args);
-	philo = create_struct(args, &mutexes, deadman);
+	philo = create_struct(args, &mutexes, deadman, fdn, fdt);
 	if (!philo)
 	{
 		dest_mutexes(mutexes, args);
@@ -81,8 +86,8 @@ void	start(int *args)
 		if (pthread_join(t[i], NULL))
 			return end(JOIN, args, philo, t);
 	}
-	printf("%ld %d has died\n", philo[0].firstDead->time - philo[0].startTime, philo[0].firstDead->num + 1);
-	printf("%ld %ld %ld\n", philo[0].lastMeal, philo[0].startTime, philo[0].firstDead->time);
+	printf("%ld %d has died\n", *(philo[0].firstDead->time) - philo[0].startTime, *(philo[0].firstDead->num) + 1);
+	printf("lastmeal %ld starttime %ld fd %ld\n", philo[0].lastMeal, philo[0].startTime, *(philo[0].firstDead->time));
 	dest_mutexes(mutexes, args);
 	return end(OK, args, philo, t);
 }
