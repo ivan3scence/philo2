@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -pthread -Leaks -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=address
 
 HDRS = philo.h
 

@@ -52,11 +52,6 @@ void	dest_mutexes(t_mutexes mutexes, int *args)
 		free(mutexes.forks);
 		mutexes.forks = NULL;
 	}
-	if (args)
-	{
-		free(args);
-		args = NULL;
-	}
 }
 
 // int	checkEnd(int *args)

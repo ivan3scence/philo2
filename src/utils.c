@@ -12,6 +12,15 @@ size_t	ft_strlen(const char *str)
 
 void	end(int err_no, int *args, t_philo *philo, pthread_t *t)
 {
+	printf("pip\n");
+	if (philo)
+	{
+		// while (args[0]--)
+		// 	free(philo[args[0]].firstDead);
+		free(philo);
+		philo = NULL;
+	}
+	printf("pip\n");
 	if (args)
 	{
 		free(args);
@@ -22,15 +31,14 @@ void	end(int err_no, int *args, t_philo *philo, pthread_t *t)
 		free(t);
 		t = NULL;
 	}
-	if (philo)
-	{
-		free(philo);
-		philo = NULL;
-	}
 	if (err_no == ARGS)
 		ft_putstr_fd("Invalid argements!\n", 2);
 	else if (err_no == MALLOC)
 		ft_putstr_fd("Malloc rip\n", 2);
+	else if (err_no == THREAD)
+		ft_putstr_fd("Tread rip\n", 2);
+	else if (err_no == JOIN)
+		ft_putstr_fd("Join rip\n", 2);
 }
 
 void	ft_putstr_fd(char *s, int fd)

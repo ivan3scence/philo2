@@ -12,6 +12,7 @@
 # define MALLOC 2
 # define THREAD 3
 # define JOIN 4
+# define OK 5
 
 
 typedef struct s_flags
@@ -20,6 +21,11 @@ typedef struct s_flags
 	int	someoneDied;
 }	t_flags;
 
+typedef struct s_fd
+{
+	int			num;
+	long int	time;
+}	t_fd;
 // typedef struct s_args
 // {
 // 	int				*pars;
@@ -50,6 +56,7 @@ typedef struct s_philo
 	long int		startTime;
 	long int		lastMeal;
 	t_mutexes		mutexes;
+	t_fd			*firstDead;
 }	t_philo;
 
 long int	pretty_time(t_philo *philo, int flag);

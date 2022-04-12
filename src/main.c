@@ -1,50 +1,27 @@
 #include "../includes/philo.h"
 
-// void	finish(t_args *args, t_philo *philo)
-// {
-// 	if (args)
-// 	{
-// 		// free(args->flags.haveEaten);
-// 		// args->flags.haveEaten = NULL;
-// 		free(args);
-// 		args = NULL;
-// 	}
-// 	if (philo)
-// 	{
-// 		if (philo->mutexes.forks)
-// 		{
-// 			free(philo->mutexes.forks);
-// 			philo->mutexes.forks = NULL;
-// 		}
-// 		free(philo);
-// 		philo = NULL;
-// 	}
-// } 
-
-//void	*dead(t_philo *philo)
-//{
-//	//pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-//	//pthread_mutex_lock(&philo->mutexes.mutexEnd);
-//	//printf("%ld %d died\n", pretty_time(philo, 0)
-//			- philo->args->startTime, philo->num + 1);
-//	//pthread_mutex_unlock(&philo->mutexes.mutexEnd);
-//	//pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
-//	return ((void *)1);
-//}
-
-
-
 t_philo	*create_struct(int *args, t_mutexes *mutexes, int *deadman)
 {
 	t_philo		*philo;
 	int			i;
-	// int			deadman;
+	t_fd		*fistDead;
 
 	i = -1;
 	// deadman = 0;
+	fistDead = (t_fd *)malloc(sizeof(t_fd));
+	if (!fistDead)
+	{
+		end(MALLOC, args, NULL, NULL);
+		return (NULL);
+	}
+	fistDead->num = -1;
 	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
 	if (!philo)
-		return (NULL);//!!!!!!!!!!!!!!!!
+	{
+		free(fistDead);
+		end(MALLOC, args, NULL, NULL);
+		return (NULL);
+	}
 	// if (args[4] != -1)
 	// {
 	// 	args[4] = args[0] * args[4];
@@ -57,6 +34,7 @@ t_philo	*create_struct(int *args, t_mutexes *mutexes, int *deadman)
 		philo[i].num = i;
 		philo[i].mutexes = *mutexes;
 		philo[i].someoneDead = deadman;
+		philo[i].firstDead = fistDead;
 		// philo[i].needtoeat = NULL;
 		// if (args[4] != -1)
 		// 	philo[i].needtoeat = &args[4];
@@ -84,7 +62,7 @@ void	start(int *args)
 	if (!philo)
 	{
 		dest_mutexes(mutexes, args);
-		return end(MALLOC, NULL, NULL, t);
+		return end(MALLOC, args, NULL, t);
 	}
 	gettime(&time);
 	while (++i < args[0])
@@ -94,7 +72,7 @@ void	start(int *args)
 		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
 			dest_mutexes(mutexes, args);
-			return end(THREAD, NULL, philo, t);
+			return end(THREAD, args, philo, t);
 		}
 	}
 	i = -1;
@@ -103,27 +81,10 @@ void	start(int *args)
 		if (pthread_join(t[i], NULL))
 			return end(JOIN, args, philo, t);
 	}
-	// if (checkEnd(args) == -1)
-	// {
-	// 	while (++i < args[0])
-	// 		pthread_detach(t[i]);
-	// 	dest_mutexes(mutexes, args);
-	// 	finish(args, NULL);
-	// 	free(philo);
-	// 	printf("umer\n");
-	// 	return ;
-	// }
-	// while (++i < args->quant)
-	// {
-	// 	if (!pthread_join(t[i], NULL))
-	// 			return ;
-	// }
+	printf("%ld %d has died\n", philo[0].firstDead->time - philo[0].startTime, philo[0].firstDead->num + 1);
+	printf("%ld %ld %ld\n", philo[0].lastMeal, philo[0].startTime, philo[0].firstDead->time);
 	dest_mutexes(mutexes, args);
-	// finish(args, NULL);
-	free(philo);
-	philo = NULL;
-	free(t);
-	t = NULL;
+	return end(OK, args, philo, t);
 }
 
 int	main(int argc, char **argv)
@@ -134,5 +95,4 @@ int	main(int argc, char **argv)
 	if (!args)
 		return (0);
 	start(args);
-	//finish(args, NULL);
 }
