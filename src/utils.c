@@ -10,27 +10,18 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-void	end(int err_no, int *args, t_philo *philo, pthread_t *t)
+void	end(int err_no, long int *args, t_philo *philo, pthread_t *t)
 {
-	printf("pip\n");
 	if (philo)
 	{
-		// while (args[0]--)
-		// 	free(philo[args[0]].firstDead);
+		if (philo->firstDead)
+			free(philo->firstDead);
 		free(philo);
-		philo = NULL;
 	}
-	printf("pip\n");
 	if (args)
-	{
 		free(args);
-		args = NULL;
-	}
 	if (t)
-	{
 		free(t);
-		t = NULL;
-	}
 	if (err_no == ARGS)
 		ft_putstr_fd("Invalid argements!\n", 2);
 	else if (err_no == MALLOC)
@@ -59,7 +50,7 @@ long int	gettime(long int *time)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	ft_atoi(const char *str)
+long int	ft_atoi(const char *str)
 {
 	long long int	n;
 	long long int	k;
@@ -82,7 +73,7 @@ int	ft_atoi(const char *str)
 		{
 			if (k > 0)
 				return (-1);
-			return (0);
+			return (-1);
 		}
 	}
 	if (str[i])

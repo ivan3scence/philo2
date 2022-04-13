@@ -5,126 +5,83 @@ void	*checkDeath(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	// usleep(1000 * philo->args[1]);
-	// pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
-	while (1)
-	{
-		pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
-		if ((philo->lastMeal - philo->startTime) > philo->args[1])
-		{
-			pthread_mutex_lock(&philo->mutexes.mutexEnd);
-			*(philo->someoneDead) = 1;
-			if (*(philo->firstDead->num) == -1)
-			{
-				*(philo->firstDead->time) = gettime(NULL);
-				*(philo->firstDead->num) = philo->num;
-				pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-				printf("lastmeal %ld starttime %ld fd %ld\n", philo->lastMeal, philo->startTime, *(philo->firstDead->time));
-				printf("ya ne poel %d %ld\n", *(philo->firstDead->num) + 1, *(philo->firstDead->time) - philo->startTime);
-			}
-			printf("lastmeal %ld starttime %ld fd %ld\n", philo->lastMeal, philo->startTime, *(philo->firstDead->time));
-			printf("ya ne poel %d %ld\n", *(philo->firstDead->num) + 1, *(philo->firstDead->time) - philo->startTime);
-			pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
-			pthread_mutex_unlock(&philo->mutexes.mutexEnd);
-			pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
-			return (NULL);
-		}
-		pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
-	}
+	while (gettime(NULL) - philo->lastMeal <= philo->args[1])
+		usleep(42);
+	died(philo);
 	return (NULL);
 }
 
 void	*philosopher(void	*a)
 {
-	t_philo	*philo;
-	// pthread_t	pdeath;
-	pthread_t	plife;
+	t_philo		*philo;
+	pthread_t	pdeath;
 
 	philo = (t_philo *)a;
-	// retur = 0;
+	pthread_create(&pdeath, NULL, checkDeath, (void *)philo);
 	if (philo->num % 2 == 1)
-		usleep(100);
-	// printf("jojo%d\n", *(philo->someoneDead));
-	// if (pthread_create(&pdeath, NULL, checkDeath, philo))
-	// 		return (NULL);
-	if (pthread_create(&plife, NULL, philo_life, philo))
-			return (NULL);
-	// pthread_join(pdeath, (void *)&retur);
-	// if (retur == 1)
-	// 	pthread_detach(plife);
-	// else
-	pthread_join(plife, NULL);
-	// pthread_detach(pdeath);
-	if (philo->lastMeal == -1)
-	{
-		printf("%ld %d poelllllllllllllllllllllll\n", gettime(NULL) - philo->startTime, philo->num);
-		return ((void *)2);
-	}
-	// printf("%ld %d has died\n", gettime(NULL) - philo->startTime, philo->num + 1);
-	return ((void *)1);
+		usleep(800);
+	philo_life(philo);
+	pthread_detach(pdeath);
+	return (NULL);
 }
 
-void	sleep_ph(t_philo *philo)
+int	sleep_ph(t_philo *philo)
 {
-	// pthread_t	psleep;
-
-	// if (pthread_create(&psleep, NULL, my_sleep, &philo->args[3]))
-	// 	exit(1);
 	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-	// pthread_mutex_lock(&philo->mutexes.mutexEnd);
-	if (philo->lastMeal - philo->startTime > philo->args[0])
-		return died(philo);
+	if (gettime(NULL) - philo->lastMeal > philo->args[1])
+		return (died(philo));
 	printf("%ld %d is sleeping\n", -philo->startTime
 			+ gettime(NULL), philo->num + 1);
-	// pthread_mutex_unlock(&philo->mutexes.mutexEnd);
 	pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
-	usleep(philo->args[3] * 1000);
-	// pthread_join(psleep, NULL);
+	ftsleep(philo->args[3]);
 	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-	// pthread_mutex_lock(&philo->mutexes.mutexEnd);
-	if (philo->lastMeal - philo->startTime > philo->args[0])
-		return died(philo);
+	if (gettime(NULL) - philo->lastMeal > philo->args[1])
+		return (died(philo));
 	printf("%ld %d is thinking\n", -philo->startTime
 			+ gettime(NULL), philo->num + 1);
-	// pthread_mutex_unlock(&philo->mutexes.mutexEnd);
 	pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
+	return (0);
 }
 
-void	died(t_philo *philo)
+int	died(t_philo *philo)
 {
-	*(philo->firstDead->num) = philo->num;
-	*(philo->firstDead->time) = gettime(NULL);
-	return (NULL);
+	pthread_mutex_lock(&philo->mutexes.mutexEnd);
+	if (*(philo->firstDead->num) == -1)
+	{
+		philo->args[1] = -1;
+		*(philo->firstDead->num) = philo->num;
+		*(philo->firstDead->time) = gettime(NULL);
+	}
+	pthread_mutex_unlock(&philo->mutexes.mutexEnd);
+	
+	return (1);
 }
 
-void	*philo_life(void *p)
+int	philo_life(t_philo *philo)
 {
-	t_philo	*philo;
-	int		meals;
+	int	meals;
+	int	tf;
 
 	meals = 0;
-	philo = (t_philo *)p;
-	// pthread_mutex_lock(&philo->mutexes.mutexHaveEaten);
-	philo->startTime = gettime(&(philo->lastMeal));
-	// pthread_mutex_unlock(&philo->mutexes.mutexHaveEaten);
-	// pthread_mutex_lock(&philo->mutexes.mutexEnd);
-	// printf("jkk%d\n", *(philo->someoneDead));
-	// while (!philo->args->flags.someoneDied && (philo->args[4] == -1
-	while (*(philo->someoneDead) == 0 && (philo->args[4] == -1
-				|| meals++ < philo->args[4]))
+	while (philo->args[4] == -1 || meals < philo->args[4])
 	{
-		// printf("pop%d %d %d args\n", philo->num, meals, philo->args[4]);
-		// pthread_mutex_unlock(&philo->mutexes.mutexEnd);
-		take_forks(philo);
-		eat(philo);
+		if (gettime(NULL) - philo->lastMeal > philo->args[1])
+		{
+			died(philo);
+			return (1);
+		}
+		tf = take_forks(philo);
+		if (tf == -1)
+			continue ;
+		if (tf)
+			return (1);
+		if (eat(philo))
+			return (1);
 		put_forks(philo);
-		sleep_ph(philo);
-		// pthread_mutex_lock(&philo->mutexes.mutexEnd);
-		// printf("%d %d\n", *(philo->someoneDead), meals);
-		if (philo->lastMeal - philo->startTime > philo->args[0])
-			return (NULL);
+		if (philo->args[4] != -1 && ++meals >= philo->args[4])
+			return (2);
+		if (sleep_ph(philo))
+			return (1);
 	}
-	if (meals >= philo->args[4] && philo->args[4] != -1)
-		philo->lastMeal = -1;
-	return (NULL);
+	return (2);
 }
