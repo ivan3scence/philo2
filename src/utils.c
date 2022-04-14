@@ -14,8 +14,8 @@ void	end(int err_no, long int *args, t_philo *philo, pthread_t *t)
 {
 	if (philo)
 	{
-		if (philo->firstDead)
-			free(philo->firstDead);
+		if (philo->firstdead)
+			free(philo->firstdead);
 		free(philo);
 	}
 	if (args)

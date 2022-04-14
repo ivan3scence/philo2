@@ -4,21 +4,21 @@ t_philo	*create_struct(long int *args, t_mutexes *mutexes, int *fdnum, long int 
 {
 	t_philo		*philo;
 	int			i;
-	t_fd		*fistDead;
+	t_fd		*fistdead;
 
 	i = -1;
-	fistDead = (t_fd *)malloc(sizeof(t_fd));
-	if (!fistDead)
+	fistdead = (t_fd *)malloc(sizeof(t_fd));
+	if (!fistdead)
 	{
 		end(MALLOC, args, NULL, NULL);
 		return (NULL);
 	}
-	fistDead->num = fdnum;
-	fistDead->time = fdtime;
+	fistdead->num = fdnum;
+	fistdead->time = fdtime;
 	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
 	if (!philo)
 	{
-		free(fistDead);
+		free(fistdead);
 		end(MALLOC, args, NULL, NULL);
 		return (NULL);
 	}
@@ -27,7 +27,7 @@ t_philo	*create_struct(long int *args, t_mutexes *mutexes, int *fdnum, long int 
 		philo[i].args = args;
 		philo[i].num = i;
 		philo[i].mutexes = *mutexes;
-		philo[i].firstDead = fistDead;
+		philo[i].firstdead = fistdead;
 	}
 	return (philo);
 }
@@ -54,11 +54,11 @@ void	start(long int *args)
 		dest_mutexes(mutexes, args);
 		return end(MALLOC, args, NULL, t);
 	}
-	philo[0].startTime = gettime(NULL);
+	philo[0].starttime = gettime(NULL);
 	while (++i < args[0])
 	{
-		philo[i].startTime = philo[0].startTime;
-		philo[i].lastMeal = philo[0].startTime;
+		philo[i].starttime = philo[0].starttime;
+		philo[i].lastmeal = philo[0].starttime;
 		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
 			dest_mutexes(mutexes, args);
@@ -72,7 +72,7 @@ void	start(long int *args)
 			return end(JOIN, args, philo, t);
 	}
 	if (fdnum != -1)
-		printf("%ld %d has died\n", fdtime - philo[0].startTime, fdnum + 1);
+		printf("%ld %d has died\n", fdtime - philo[0].starttime, fdnum + 1);
 	dest_mutexes(mutexes, args);
 	return end(OK, args, philo, t);
 }

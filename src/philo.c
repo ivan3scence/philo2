@@ -1,11 +1,11 @@
 #include "../includes/philo.h"
 
-void	*checkDeath(void *data)
+void	*check_death(void *data)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	while (gettime(NULL) - philo->lastMeal <= philo->args[1])
+	while (gettime(NULL) - philo->lastmeal <= philo->args[1])
 		usleep(42);
 	died(philo);
 	return (NULL);
@@ -17,7 +17,7 @@ void	*philosopher(void	*a)
 	pthread_t	pdeath;
 
 	philo = (t_philo *)a;
-	pthread_create(&pdeath, NULL, checkDeath, (void *)philo);
+	pthread_create(&pdeath, NULL, check_death, (void *)philo);
 	if ((philo->num == 1 + philo->args[0] && philo->args[0] != 1)
 		|| philo->num % 2 == 1)
 		usleep(philo->args[2] / 2 * 1000);
@@ -28,32 +28,32 @@ void	*philosopher(void	*a)
 
 int	sleep_ph(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-	if (gettime(NULL) - philo->lastMeal > philo->args[1])
+	pthread_mutex_lock(&philo->mutexes.mutexprintf);
+	if (gettime(NULL) - philo->lastmeal > philo->args[1])
 		return (died(philo));
-	printf("%ld %d is sleeping\n", -philo->startTime
+	printf("%ld %d is sleeping\n", -philo->starttime
 			+ gettime(NULL), philo->num + 1);
-	pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
+	pthread_mutex_unlock(&philo->mutexes.mutexprintf);
 	ftsleep(philo->args[3]);
-	pthread_mutex_lock(&philo->mutexes.mutexPrintf);
-	if (gettime(NULL) - philo->lastMeal > philo->args[1])
+	pthread_mutex_lock(&philo->mutexes.mutexprintf);
+	if (gettime(NULL) - philo->lastmeal > philo->args[1])
 		return (died(philo));
-	printf("%ld %d is thinking\n", -philo->startTime
+	printf("%ld %d is thinking\n", -philo->starttime
 			+ gettime(NULL), philo->num + 1);
-	pthread_mutex_unlock(&philo->mutexes.mutexPrintf);
+	pthread_mutex_unlock(&philo->mutexes.mutexprintf);
 	return (0);
 }
 
 int	died(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->mutexes.mutexEnd);
-	if (*(philo->firstDead->num) == -1)
+	pthread_mutex_lock(&philo->mutexes.mutexend);
+	if (*(philo->firstdead->num) == -1)
 	{
 		philo->args[1] = -1;
-		*(philo->firstDead->num) = philo->num;
-		*(philo->firstDead->time) = gettime(NULL);
+		*(philo->firstdead->num) = philo->num;
+		*(philo->firstdead->time) = gettime(NULL);
 	}
-	pthread_mutex_unlock(&philo->mutexes.mutexEnd);
+	pthread_mutex_unlock(&philo->mutexes.mutexend);
 	
 	return (1);
 }
@@ -66,7 +66,7 @@ int	philo_life(t_philo *philo)
 	meals = 0;
 	while (philo->args[4] == -1 || meals < philo->args[4])
 	{
-		if (gettime(NULL) - philo->lastMeal > philo->args[1])
+		if (gettime(NULL) - philo->lastmeal > philo->args[1])
 		{
 			died(philo);
 			return (1);

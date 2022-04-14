@@ -49,8 +49,8 @@ void	dest_mutexes(t_mutexes mutexes, long int *args)
 	int	i;
 
 	i = -1;
-	pthread_mutex_destroy(&mutexes.mutexPrintf);
-	pthread_mutex_destroy(&mutexes.mutexEnd);
+	pthread_mutex_destroy(&mutexes.mutexprintf);
+	pthread_mutex_destroy(&mutexes.mutexend);
 	while (++i < args[0])
 		pthread_mutex_destroy(&mutexes.forks[i]);
 	if (mutexes.forks)
@@ -66,8 +66,8 @@ t_mutexes	init_mutexes(long int *args)
 	int	i;
 
 	i = -1;
-	pthread_mutex_init(&mutexes.mutexPrintf, NULL);
-	pthread_mutex_init(&mutexes.mutexEnd, NULL);
+	pthread_mutex_init(&mutexes.mutexprintf, NULL);
+	pthread_mutex_init(&mutexes.mutexend, NULL);
 	mutexes.forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 			* args[0]);
 	if (!mutexes.forks)

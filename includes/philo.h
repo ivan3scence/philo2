@@ -22,8 +22,8 @@ typedef struct s_fd
 
 typedef struct s_mutexes
 {
-	pthread_mutex_t	mutexPrintf;
-	pthread_mutex_t	mutexEnd;
+	pthread_mutex_t	mutexprintf;
+	pthread_mutex_t	mutexend;
 	pthread_mutex_t	*forks;
 }	t_mutexes;
 
@@ -31,10 +31,10 @@ typedef struct s_philo
 {
 	long int		*args;
 	int				num;
-	long int		startTime;
-	long int		lastMeal;
+	long int		starttime;
+	long int		lastmeal;
 	t_mutexes		mutexes;
-	t_fd			*firstDead;
+	t_fd			*firstdead;
 }	t_philo;
 
 long int	pretty_time(t_philo *philo, int flag);
@@ -43,13 +43,13 @@ int			take_forks(t_philo *philo);
 int			eat(t_philo *philo);
 void		ftsleep(long int time);
 int			died(t_philo *philo);
-void		*checkDeath(void *data);
+void		*check_death(void *data);
 void		*philosopher(void	*a);
 int			sleep_ph(t_philo *philo);
 int			philo_life(t_philo *philo);
 size_t		ft_strlen(const char *str);
 void		end(int err_no, long int *args,
-t_philo *philo, pthread_t *t);
+				t_philo *philo, pthread_t *t);
 void		ft_putstr_fd(char *s, int fd);
 long int	gettime(long int *time);
 long int	ft_atoi(const char *str);
@@ -58,7 +58,7 @@ long int	*validate(int argc, char **argv);
 void		dest_mutexes(t_mutexes mutexes, long int *args);
 t_mutexes	init_mutexes(long int *args);
 t_philo		*create_struct(long int *args, t_mutexes *mutexes,
-int *fdnum, long int *fdtime);
+				int *fdnum, long int *fdtime);
 void		start(long int *args);
 
-# endif
+#endif
