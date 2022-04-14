@@ -18,8 +18,9 @@ void	*philosopher(void	*a)
 
 	philo = (t_philo *)a;
 	pthread_create(&pdeath, NULL, checkDeath, (void *)philo);
-	if (philo->num % 2 == 1)
-		usleep(800);
+	if ((philo->num == 1 + philo->args[0] && philo->args[0] != 1)
+		|| philo->num % 2 == 1)
+		usleep(philo->args[2] / 2 * 1000);
 	philo_life(philo);
 	pthread_detach(pdeath);
 	return (NULL);
