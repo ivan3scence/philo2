@@ -18,7 +18,7 @@ void	*check_death(void *data)
 
 	philo = (t_philo *)data;
 	while (gettime(NULL) - philo->lastmeal <= philo->args[1])
-		usleep(42);
+		usleep(250);
 	died(philo);
 	return (NULL);
 }
@@ -35,6 +35,7 @@ void	*philosopher(void	*a)
 		usleep(philo->args[2] / 2 * 1000);
 	philo_life(philo);
 	pthread_detach(pdeath);
+	ft_putstr_fd("1\n", 1);
 	return (NULL);
 }
 
@@ -58,7 +59,7 @@ int	sleep_ph(t_philo *philo)
 
 int	died(t_philo *philo)
 {
-	// printf("aaaaaaaaaaaaa\n");
+	printf("aaaaaaaaaaaaa\n");
 	pthread_mutex_lock(&philo->mutexes.mutexend);
 	if (*(philo->firstdead->num) == -1)
 	{
@@ -67,26 +68,20 @@ int	died(t_philo *philo)
 		*(philo->firstdead->time) = gettime(NULL);
 	}
 	pthread_mutex_unlock(&philo->mutexes.mutexend);
+	put_forks(philo);
 	return (1);
 }
 
 int	philo_life(t_philo *philo)
 {
 	int	meals;
-	int	tf;
 
 	meals = 0;
 	while (philo->args[4] == -1 || meals < philo->args[4])
 	{
 		if (gettime(NULL) - philo->lastmeal > philo->args[1])
-		{
-			died(philo);
-			return (1);
-		}
-		tf = take_forks(philo);
-		if (tf == -1)
-			continue ;
-		if (tf)
+			return (died(philo));
+		if (take_forks(philo))
 			return (1);
 		if (eat(philo))
 			return (1);

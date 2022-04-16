@@ -80,12 +80,12 @@ t_mutexes	init_mutexes(long int *args)
 	int			i;
 
 	i = -1;
-	pthread_mutex_init(&mutexes.mutexprintf, NULL);
-	pthread_mutex_init(&mutexes.mutexend, NULL);
 	mutexes.forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 			* args[0]);
 	if (!mutexes.forks)
 		return (mutexes);
+	pthread_mutex_init(&mutexes.mutexprintf, NULL);
+	pthread_mutex_init(&mutexes.mutexend, NULL);
 	while (++i < args[0])
 		pthread_mutex_init(&mutexes.forks[i], NULL);
 	return (mutexes);

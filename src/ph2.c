@@ -14,8 +14,6 @@
 
 int	take_forks(t_philo *philo)
 {
-	if (gettime(NULL) - philo->lastmeal > philo->args[1])
-		return (died(philo));
 	pthread_mutex_lock(&philo->mutexes.forks[philo->num]);
 	pthread_mutex_lock(&philo->mutexes.mutexprintf);
 	if (gettime(NULL) - philo->lastmeal > philo->args[1])
@@ -29,8 +27,6 @@ int	take_forks(t_philo *philo)
 			;
 		return (died(philo));
 	}
-	if (gettime(NULL) - philo->lastmeal > philo->args[1])
-		return (died(philo));
 	if (philo->num == 0)
 		pthread_mutex_lock(&philo->mutexes.forks[philo->args[0] - 1]);
 	else
