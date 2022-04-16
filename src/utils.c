@@ -26,21 +26,18 @@ void	end(int err_no, long int *args, t_philo *philo, pthread_t *t)
 {
 	if (philo)
 	{
-		if (philo->firstdead)
-			free(philo->firstdead);
-		if (philo->firstdead)
-			philo->firstdead = NULL;
+		if (philo[0].firstdead)
+			free(philo[0].firstdead);
+		philo[0].firstdead = NULL;
 		free(philo);
 		philo = NULL;
 	}
 	if (args)
 		free(args);
-	if (args)
-		args = NULL;
+	args = NULL;
 	if (t)
 		free(t);
-	if (t)
-		t = NULL;
+	t = NULL;
 	if (err_no == ARGS)
 		ft_putstr_fd("Invalid argements!\n", 2);
 	else if (err_no == MALLOC)

@@ -18,7 +18,10 @@ void	*check_death(void *data)
 
 	philo = (t_philo *)data;
 	while (gettime(NULL) - philo->lastmeal <= philo->args[1])
+	{
 		usleep(250);
+		// printf("poel\n");
+	}
 	died(philo);
 	return (NULL);
 }
@@ -34,8 +37,9 @@ void	*philosopher(void	*a)
 		|| philo->num % 2 == 1)
 		usleep(philo->args[2] / 2 * 1000);
 	philo_life(philo);
+	// printf("poel\n");
 	pthread_detach(pdeath);
-	ft_putstr_fd("1\n", 1);
+	// printf("detached\n");
 	return (NULL);
 }
 
@@ -59,7 +63,7 @@ int	sleep_ph(t_philo *philo)
 
 int	died(t_philo *philo)
 {
-	printf("aaaaaaaaaaaaa\n");
+	// printf("aaaaaaaaaaaaa\n");
 	pthread_mutex_lock(&philo->mutexes.mutexend);
 	if (*(philo->firstdead->num) == -1)
 	{

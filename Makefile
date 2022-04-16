@@ -1,4 +1,5 @@
-CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -pthread
+#-fsanitize=address
 
 HDRS = philo.h
 
@@ -27,8 +28,8 @@ all:	${NAME}
 %.o :	%.c ${HEADERS}
 	${CC} -c ${CFLAGS} $< -o ${<:.c=.o}
 
-${NAME}:	${SOURCES} ${HEADERS}
-	${CC} ${CFLAGS} ${SOURCES} -o $@
+${NAME}:	${OBJS} ${HEADERS}
+	${CC} ${CFLAGS} ${OBJS} -o $@
 
 clean:
 	${RM} ${OBJS}

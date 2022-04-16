@@ -26,6 +26,7 @@ t_philo	*create_struct(long int *args, t_mutexes *mutexes,
 	fistdead = (t_fd *)malloc(sizeof(t_fd));
 	if (!fistdead)
 	{
+		dest_mutexes(*mutexes, args);
 		end(MALLOC, args, NULL, NULL);
 		return (NULL);
 	}
@@ -35,6 +36,7 @@ t_philo	*create_struct(long int *args, t_mutexes *mutexes,
 	if (!philo)
 	{
 		free(fistdead);
+		dest_mutexes(*mutexes, args);
 		end(MALLOC, args, NULL, NULL);
 		return (NULL);
 	}
@@ -84,8 +86,7 @@ int	threading(t_philo *philo)
 		philo[i].lastmeal = philo[0].starttime;
 		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
-			dest_mutexes(philo[0].mutexes, philo[0].args);
-			end(THREAD, philo[0].args, philo, t);
+			free(t);
 			return (0);
 		}
 	}
@@ -99,9 +100,10 @@ int	jointhreads(t_philo *philo, pthread_t *t)
 	i = -1;
 	while (++i < philo[0].args[0])
 	{
+		pthread_join(t[i], NULL);
 		if (pthread_join(t[i], NULL))
 		{
-			end(JOIN, philo[0].args, philo, t);
+			free(t);
 			return (0);
 		}
 	}
@@ -132,5 +134,12 @@ int	main(int argc, char **argv)
 			printf("%ld %d has died\n", fdtime - philo[0].starttime, fdnum + 1);
 	}
 	dest_mutexes(mutexes, args);
-	end(OK, args, philo, NULL);
+	free(philo[0].firstdead);
+	// philo[0].firstdead = NULL;
+	free(args);
+	// args = NULL;
+	free(philo);
+	// philo = NULL;
+	// printf("phlo %ld\nargs %ld\nfd %ld\n", sizeof(philo), sizeof(args), sizeof(philo[0].firstdead));
+	// end(OK, args, philo, NULL);
 }
