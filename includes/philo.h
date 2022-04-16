@@ -39,6 +39,7 @@ typedef struct s_philo
 
 long int	pretty_time(t_philo *philo, int flag);
 void		put_forks(t_philo *philo);
+pthread_t	*threading(t_philo *philo);
 int			take_forks(t_philo *philo);
 int			eat(t_philo *philo);
 void		ftsleep(long int time);
@@ -52,13 +53,15 @@ void		end(int err_no, long int *args,
 				t_philo *philo, pthread_t *t);
 void		ft_putstr_fd(char *s, int fd);
 long int	gettime(long int *time);
-long int	ft_atoi(const char *str);
-long int	*checkDigits(int argc, char **argv);
+long int	ft_atoi(const char *str, long long int k);
+long int	*check_digits(int argc, char **argv);
 long int	*validate(int argc, char **argv);
+pthread_t	*jointhreads(t_philo *philo, pthread_t *t);
 void		dest_mutexes(t_mutexes mutexes, long int *args);
 t_mutexes	init_mutexes(long int *args);
 t_philo		*create_struct(long int *args, t_mutexes *mutexes,
 				int *fdnum, long int *fdtime);
 void		start(long int *args);
+long int	*matoi(char **argv, long int *args);
 
 #endif

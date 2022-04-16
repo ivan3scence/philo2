@@ -50,13 +50,11 @@ long int	gettime(long int *time)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-long int	ft_atoi(const char *str)
+long int	ft_atoi(const char *str, long long int k)
 {
 	long long int	n;
-	long long int	k;
 	int				i;
 
-	k = 1;
 	n = 0;
 	i = 0;
 	while ((str[i]) && (((str[i] > 8) && (str[i] < 14)) || (str[i] == 32)))
