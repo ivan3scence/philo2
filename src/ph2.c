@@ -1,7 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ph2.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/07 13:07:44 by sdonny            #+#    #+#             */
+/*   Updated: 2022/02/07 13:07:46 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/philo.h"
 
 int	take_forks(t_philo *philo)
 {
+	if (gettime(NULL) - philo->lastmeal > philo->args[1])
+		return (died(philo));
 	pthread_mutex_lock(&philo->mutexes.forks[philo->num]);
 	pthread_mutex_lock(&philo->mutexes.mutexprintf);
 	if (gettime(NULL) - philo->lastmeal > philo->args[1])
@@ -15,6 +29,8 @@ int	take_forks(t_philo *philo)
 			;
 		return (died(philo));
 	}
+	if (gettime(NULL) - philo->lastmeal > philo->args[1])
+		return (died(philo));
 	if (philo->num == 0)
 		pthread_mutex_lock(&philo->mutexes.forks[philo->args[0] - 1]);
 	else
@@ -56,4 +72,20 @@ void	ftsleep(long int time)
 	start = gettime(NULL);
 	while (gettime(NULL) - start < time)
 		usleep(42);
+}
+
+t_philo	*insert(t_philo *philo, long int *args,
+	t_mutexes *mutexes, t_fd *fistdead)
+{
+	int	i;
+
+	i = -1;
+	while (++i < args[0])
+	{
+		philo[i].args = args;
+		philo[i].num = i;
+		philo[i].mutexes = *mutexes;
+		philo[i].firstdead = fistdead;
+	}
+	return (philo);
 }

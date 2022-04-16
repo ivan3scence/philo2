@@ -1,13 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/07 13:07:44 by sdonny            #+#    #+#             */
+/*   Updated: 2022/02/07 13:07:46 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/philo.h"
 
 t_philo	*create_struct(long int *args, t_mutexes *mutexes,
 	int *fdnum, long int *fdtime)
 {
 	t_philo		*philo;
-	int			i;
 	t_fd		*fistdead;
 
-	i = -1;
 	if (!(mutexes->forks))
 	{
 		end(MALLOC, args, NULL, NULL);
@@ -28,14 +38,7 @@ t_philo	*create_struct(long int *args, t_mutexes *mutexes,
 		end(MALLOC, args, NULL, NULL);
 		return (NULL);
 	}
-	while (++i < args[0])
-	{
-		philo[i].args = args;
-		philo[i].num = i;
-		philo[i].mutexes = *mutexes;
-		philo[i].firstdead = fistdead;
-	}
-	return (philo);
+	return (insert(philo, args, mutexes, fistdead));
 }
 
 void	start(long int *args)

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/07 13:07:44 by sdonny            #+#    #+#             */
+/*   Updated: 2022/02/07 13:07:46 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 # include <stdlib.h>
@@ -44,6 +56,8 @@ int			take_forks(t_philo *philo);
 int			eat(t_philo *philo);
 void		ftsleep(long int time);
 int			died(t_philo *philo);
+t_philo		*insert(t_philo *philo, long int *args,
+				t_mutexes *mutexes, t_fd *fistdead);
 void		*check_death(void *data);
 void		*philosopher(void	*a);
 int			sleep_ph(t_philo *philo);

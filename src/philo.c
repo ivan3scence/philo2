@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/07 13:07:44 by sdonny            #+#    #+#             */
+/*   Updated: 2022/02/07 13:07:46 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/philo.h"
 
 void	*check_death(void *data)
@@ -46,6 +58,7 @@ int	sleep_ph(t_philo *philo)
 
 int	died(t_philo *philo)
 {
+	// printf("aaaaaaaaaaaaa\n");
 	pthread_mutex_lock(&philo->mutexes.mutexend);
 	if (*(philo->firstdead->num) == -1)
 	{
