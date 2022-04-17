@@ -46,7 +46,6 @@ void	end(int err_no, long int *args, t_philo *philo, pthread_t *t)
 		ft_putstr_fd("Tread rip\n", 2);
 	else if (err_no == JOIN)
 		ft_putstr_fd("Join rip\n", 2);
-	printf("4\n");
 }
 
 void	ft_putstr_fd(char *s, int fd)

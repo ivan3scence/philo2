@@ -1,5 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -pthread
-#-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=address
 
 HDRS = philo.h
 
@@ -25,7 +24,7 @@ OBJS = $(patsubst %.c, %.o, ${SOURCES})
 
 all:	${NAME}
 
-%.o :	%.c ${HEADERS}
+%.o :	%.c ${HEADERS} Makefile
 	${CC} -c ${CFLAGS} $< -o ${<:.c=.o}
 
 ${NAME}:	${OBJS} ${HEADERS}

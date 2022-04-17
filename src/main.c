@@ -33,42 +33,8 @@ t_philo	*create_struct(long int *args, t_mutexes *mutexes,
 	fistdead->num = fdnum;
 	fistdead->time = fdtime;
 	philo = (t_philo *)malloc(sizeof(t_philo) * args[0]);
-	if (!philo)
-	{
-		free(fistdead);
-		dest_mutexes(*mutexes, args);
-		end(MALLOC, args, NULL, NULL);
-		return (NULL);
-	}
 	return (insert(philo, args, mutexes, fistdead));
 }
-
-// void	start(long int *args)
-// {
-// 	t_philo		*philo;
-// 	pthread_t	*t;
-// 	int			fdnum;
-// 	long int	fdtime;
-// 	t_mutexes	mutexes;
-
-// 	fdnum = -1;
-// 	fdtime = 0;
-// 	mutexes = init_mutexes(args);
-// 	philo = create_struct(args, &mutexes, &fdnum, &fdtime);
-// 	if (!philo)
-// 	{
-// 		dest_mutexes(mutexes, args);
-// 		return (end(MALLOC, args, NULL, NULL));
-// 	}
-// 	t = threading(philo);
-// 	if (!t)
-// 		return ;
-// 	if (fdnum != -1)
-// 		printf("%ld %d has died\n", fdtime - philo[0].starttime, fdnum + 1);
-// 	dest_mutexes(mutexes, args);
-// 	printf("3\n");
-// 	return (end(OK, args, philo, t));
-// }
 
 int	threading(t_philo *philo)
 {
@@ -87,6 +53,7 @@ int	threading(t_philo *philo)
 		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
 			free(t);
+			printf("phtread_create rip\n");
 			return (0);
 		}
 	}
@@ -100,14 +67,15 @@ int	jointhreads(t_philo *philo, pthread_t *t)
 	i = -1;
 	while (++i < philo[0].args[0])
 	{
-		pthread_join(t[i], NULL);
 		if (pthread_join(t[i], NULL))
 		{
 			free(t);
+			printf("ne zojoinilsya\n");
 			return (0);
 		}
 	}
 	free(t);
+	t = NULL;
 	return (1);
 }
 
@@ -133,13 +101,8 @@ int	main(int argc, char **argv)
 		if (fdnum != -1)
 			printf("%ld %d has died\n", fdtime - philo[0].starttime, fdnum + 1);
 	}
+	else
+		printf("threading rip\n");
 	dest_mutexes(mutexes, args);
-	free(philo[0].firstdead);
-	// philo[0].firstdead = NULL;
-	free(args);
-	// args = NULL;
-	free(philo);
-	// philo = NULL;
-	// printf("phlo %ld\nargs %ld\nfd %ld\n", sizeof(philo), sizeof(args), sizeof(philo[0].firstdead));
-	// end(OK, args, philo, NULL);
+	end(OK, args, philo, NULL);
 }

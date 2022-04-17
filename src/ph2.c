@@ -76,6 +76,13 @@ t_philo	*insert(t_philo *philo, long int *args,
 	int	i;
 
 	i = -1;
+	if (!philo)
+	{
+		free(fistdead);
+		dest_mutexes(*mutexes, args);
+		end(MALLOC, args, NULL, NULL);
+		return (NULL);
+	}
 	while (++i < args[0])
 	{
 		philo[i].args = args;
