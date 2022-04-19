@@ -34,12 +34,7 @@ void	*philosopher(void	*a)
 		return (NULL);
 	if ((philo->num == philo->args[0] - 1 && philo->args[0] != 1)
 		|| philo->num % 2 == 1)
-	{
-		if (philo->args[1] > philo->args[2])
-			usleep(philo->args[2] * 500);
-		else
-			usleep(philo->args[1] * 500);
-	}
+		usleep(600);
 	ret = philo_life(philo);
 	if (pthread_join(pdeath, NULL))
 		return (NULL);
@@ -56,7 +51,8 @@ int	sleep_ph(t_philo *philo)
 	printf("%ld %d is sleeping\n", -philo->starttime
 		+ gettime(NULL), philo->num + 1);
 	pthread_mutex_unlock(&philo->mutexes.mutexprintf);
-	ftsleep(philo->args[3]);
+	if (ftsleep(philo->args[3], philo))
+		return (died(philo));
 	pthread_mutex_lock(&philo->mutexes.mutexprintf);
 	if (gettime(NULL) - philo->lastmeal > philo->args[1])
 		return (died(philo));

@@ -53,7 +53,6 @@ int	threading(t_philo *philo)
 		if (pthread_create(&t[i], NULL, philosopher, &philo[i]))
 		{
 			free(t);
-			printf("phtread_create rip\n");
 			return (0);
 		}
 	}
@@ -70,7 +69,6 @@ int	jointhreads(t_philo *philo, pthread_t *t)
 		if (pthread_join(t[i], NULL))
 		{
 			free(t);
-			printf("ne zojoinilsya\n");
 			return (0);
 		}
 	}

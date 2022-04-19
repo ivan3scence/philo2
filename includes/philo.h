@@ -54,7 +54,7 @@ void		put_forks(t_philo *philo);
 int			threading(t_philo *philo);
 int			take_forks(t_philo *philo);
 int			eat(t_philo *philo);
-void		ftsleep(long int time);
+int			ftsleep(long int time, t_philo *philo);
 int			died(t_philo *philo);
 t_philo		*insert(t_philo *philo, long int *args,
 				t_mutexes *mutexes, t_fd *fistdead);

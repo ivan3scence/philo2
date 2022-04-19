@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -pthread
 
 HDRS = philo.h
 
